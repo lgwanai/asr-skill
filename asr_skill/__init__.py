@@ -1,7 +1,7 @@
 """ASR Skill - Audio Speech Recognition Package.
 
-This package provides a simple Python API for transcribing audio files
-to text with automatic punctuation and word-level timestamps.
+This package provides a simple Python API for transcribing audio/video files
+to text with automatic punctuation, word-level timestamps, and speaker diarization.
 
 Quick Start:
     >>> from asr_skill import transcribe
@@ -9,17 +9,20 @@ Quick Start:
     >>> print(result["text"])
 
 Supported Formats:
-    - MP3, WAV, M4A, FLAC
+    - Audio: MP3, WAV, M4A, FLAC
+    - Video: MP4, AVI, MKV
 
 Output Formats:
-    - txt: Plain text with inline timestamps [HH:MM:SS.mmm]
-    - json: Structured JSON with segment-level metadata
+    - txt: Plain text with inline timestamps and speaker labels
+    - json: Structured JSON with segment-level metadata including speaker IDs
 
 Features:
     - Automatic hardware detection (CUDA GPU, Apple MPS, CPU fallback)
     - Auto-download and cache models on first use
     - Long audio support with VAD-based segmentation
     - Chinese-optimized recognition with punctuation
+    - Speaker diarization (multi-speaker identification)
+    - Video file support with automatic audio extraction
 """
 
 from pathlib import Path
@@ -28,65 +31,67 @@ from asr_skill.core.device import get_device_with_fallback
 from asr_skill.core.models import create_pipeline
 from asr_skill.core.pipeline import transcribe as _transcribe
 from asr_skill.postprocessing.formatters import format_json, format_txt
-from asr_skill.preprocessing.audio import SUPPORTED_FORMATS, preprocess_audio
+from asr_skill.preprocessing.audio import SUPPORTED_FORMATS, preprocess_input
+from asr_skill.preprocessing.video import SUPPORTED_VIDEO_FORMATS
 from asr_skill.utils.paths import get_output_path
 
 __version__ = "0.1.0"
 
-__all__ = ["transcribe", "SUPPORTED_FORMATS"]
+__all__ = ["transcribe", "SUPPORTED_FORMATS", "SUPPORTED_VIDEO_FORMATS"]
 
 
 def transcribe(
-    input_file: str, output_dir: str | None = None, format: str = "txt"
+    input_file: str,
+    output_dir: str | None = None,
+    format: str = "txt",
+    diarize: bool = True,
 ) -> dict[str, str | list]:
-    """Transcribe audio file to text.
+    """Transcribe audio or video file to text with optional speaker diarization.
 
     This is the main entry point for the ASR Skill package. It handles the
     complete transcription pipeline: hardware detection, model loading,
-    audio preprocessing, transcription, and output formatting.
+    audio/video preprocessing, transcription, and output formatting.
 
     Args:
-        input_file: Path to audio file. Supports MP3, WAV, M4A, FLAC formats.
+        input_file: Path to audio or video file.
+                    Audio: MP3, WAV, M4A, FLAC
+                    Video: MP4, AVI, MKV
         output_dir: Output directory for transcription file.
                     Default: same directory as input file.
         format: Output format - "txt" or "json". Default: "txt".
+        diarize: Enable speaker diarization. Default: True.
+                 When enabled, output includes speaker labels (Speaker A, B, C...).
 
     Returns:
         dict with keys:
             - text: Full transcription text (str)
             - segments: List of segment dicts with text, start, end, confidence (list)
             - output_path: Path to the output file (str)
+            - speakers: List of unique speaker labels (when diarize=True)
 
     Raises:
         ValueError: If input file doesn't exist or has unsupported format.
         RuntimeError: If transcription fails (CUDA OOM, corrupted audio, etc.)
 
-    Notes:
-        - Models are auto-downloaded on first use (several GB)
-        - GPU-to-CPU fallback triggers a warning
-        - Output file is written even if transcription fails mid-way
-
     Example:
         >>> from asr_skill import transcribe
-        >>> result = transcribe("meeting.mp3")
+        >>> result = transcribe("meeting.mp4")  # Video file
         >>> print(f"Output saved to: {result['output_path']}")
-        >>> print(f"Transcribed text: {result['text'][:100]}...")
+        >>> print(f"Speakers found: {result.get('speakers', [])}")
 
-        >>> # Custom output location and JSON format
-        >>> result = transcribe("audio.mp3", output_dir="./transcripts", format="json")
-        >>> print(result["segments"][0])  # First segment with timestamps
+        >>> # Disable speaker diarization
+        >>> result = transcribe("audio.mp3", diarize=False)
     """
     # Detect device with fallback warning
     device, fallback = get_device_with_fallback()
 
-    # Load model (cached after first load)
-    model = create_pipeline(device)
+    # Load model with optional speaker diarization
+    model = create_pipeline(device, diarize=diarize)
 
-    # Preprocess audio to 16kHz mono WAV
-    audio_path = preprocess_audio(input_file)
-
-    # Run transcription
-    result = _transcribe(model, audio_path, device)
+    # Preprocess input (handles both audio and video)
+    with preprocess_input(input_file) as audio_path:
+        # Run transcription
+        result = _transcribe(model, audio_path, device)
 
     if result is None:
         raise RuntimeError(f"Transcription returned no results for {input_file}")
@@ -103,8 +108,20 @@ def transcribe(
 
     output_file.write_text(output_text, encoding="utf-8")
 
-    return {
+    # Build response
+    response = {
         "text": result.get("text", ""),
-        "segments": result.get("sentences", []),
+        "segments": result.get("sentence_info") or result.get("sentences", []),
         "output_path": str(output_file),
     }
+
+    # Add speaker list if diarization was enabled
+    if diarize and "sentence_info" in result:
+        from asr_skill.postprocessing.speakers import format_speaker_label
+
+        speaker_ids = set(
+            seg.get("spk") for seg in result["sentence_info"] if "spk" in seg
+        )
+        response["speakers"] = [format_speaker_label(sid) for sid in sorted(speaker_ids)]
+
+    return response
