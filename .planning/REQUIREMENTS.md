@@ -10,7 +10,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Core Infrastructure
 
 - [x] **CORE-01**: System auto-detects available hardware (CUDA GPU, Apple MPS, CPU) and selects optimal device
-- [ ] **CORE-02**: System validates Python version (≥3.10) and dependencies before execution
+- [x] **CORE-02**: System validates Python version (≥3.10) and dependencies before execution
 - [x] **CORE-03**: System auto-downloads and caches FunASR models to local `models/` directory
 - [x] **CORE-04**: System handles GPU-to-CPU fallback gracefully with user notification
 
@@ -97,7 +97,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CORE-01 | Phase 1 | Complete |
-| CORE-02 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Complete |
 | CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
 | AUDIO-01 | Phase 1 | Complete |
