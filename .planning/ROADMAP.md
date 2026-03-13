@@ -52,7 +52,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Video extraction module with FFmpeg CLI
 - [x] 02-02-PLAN.md — Speaker diarization model and formatters
-- [ ] 02-03-PLAN.md — API integration with video and speaker support
+- [x] 02-03-PLAN.md — API integration with video and speaker support
 - [ ] 02-04-PLAN.md — End-to-end verification checkpoint
 
 ### Phase 3: Enhanced Outputs
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core ASR Pipeline | 4/4 | Complete | 01-01, 01-02, 01-03, 01-04 |
-| 2. Speaker Diarization | 2/4 | In Progress | 02-01, 02-02 |
+| 2. Speaker Diarization | 3/4 | In Progress | 02-01, 02-02, 02-03 |
 | 3. Enhanced Outputs | 0/TBD | Not started | - |
 | 4. Hotwords | 0/TBD | Not started | - |
 | 5. Integration | 0/TBD | Not started | - |

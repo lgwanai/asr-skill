@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 2 of 5 (Speaker Diarization)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In Progress
-Last activity: 2026-03-14 — Completed plan 02: Speaker diarization pipeline
+Last activity: 2026-03-14 — Completed plan 03: API integration
 
-Progress: [=====------] 50%
+Progress: [=======----] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 2.0 min
-- Total execution time: 0.20 hours
+- Total execution time: 0.27 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-core-asr-pipeline | 4 | 4 | 2.0 min |
-| 02-speaker-diarization | 2 | 2 | 2.0 min |
+| 02-speaker-diarization | 3 | 3 | 2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 2.0 min, 2.0 min, 2.0 min, 2.0 min, 2.0 min
+- Last 5 plans: 2.0 min, 2.0 min, 2.0 min, 2.0 min, 4.0 min
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -59,6 +59,8 @@ Recent decisions affecting current work:
 14. Speaker diarization enabled by default (diarize=True)
 15. spk_mode="punc_segment" for optimal speaker segmentation
 16. Time-based overlap detection with 50% threshold as fallback
+17. preprocess_input context manager for unified audio/video handling
+18. diarize parameter exposed in transcribe() API with True default
 
 ### Pending Todos
 
@@ -71,8 +73,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 02-02-PLAN.md (Speaker diarization pipeline)
-Resume file: .planning/phases/02-speaker-diarization/02-02-SUMMARY.md
+Stopped at: Completed 02-03-PLAN.md (API integration)
+Resume file: .planning/phases/02-speaker-diarization/02-03-SUMMARY.md
 
 ---
 *State initialized: 2026-03-13*
