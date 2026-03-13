@@ -13,10 +13,15 @@ Pitfall Mitigation:
 - The `batch_size_s=300` prevents memory explosion on long audio (>1 hour)
 """
 
-from typing import Any
+from typing import Any, Callable
 
 
-def transcribe(model: Any, audio_path: str, device: str) -> dict[str, Any] | None:
+def transcribe(
+    model: Any,
+    audio_path: str,
+    device: str,
+    progress_callback: Callable[[int, int], None] | None = None,
+) -> dict[str, Any] | None:
     """Run transcription on preprocessed audio file.
 
     This function executes the FunASR model inference on a preprocessed audio
@@ -27,6 +32,9 @@ def transcribe(model: Any, audio_path: str, device: str) -> dict[str, Any] | Non
         audio_path: Path to preprocessed 16kHz mono WAV file.
         device: Device string for inference ("cuda:0", "mps", or "cpu").
                 MUST be passed explicitly to prevent GPU-to-CPU fallback bug.
+        progress_callback: Optional callback for progress updates.
+                Signature: callback(current: int, total: int)
+                Called with sample counts during processing.
 
     Returns:
         dict | None: Transcription result with keys:
@@ -52,11 +60,16 @@ def transcribe(model: Any, audio_path: str, device: str) -> dict[str, Any] | Non
         >>> print(result["sentence_info"][0]["spk"])  # Speaker ID: 0, 1, 2...
     """
     try:
-        result = model.generate(
-            input=audio_path,
-            batch_size_s=300,  # 300 seconds per batch for long audio
-            device=device,  # EXPLICIT: prevents GPU-to-CPU fallback bug
-        )
+        generate_kwargs = {
+            "input": audio_path,
+            "batch_size_s": 300,  # 300 seconds per batch for long audio
+            "device": device,  # EXPLICIT: prevents GPU-to-CPU fallback bug
+        }
+        # Add progress callback if provided
+        if progress_callback is not None:
+            generate_kwargs["callback"] = progress_callback
+
+        result = model.generate(**generate_kwargs)
         return result[0] if result else None
     except RuntimeError as e:
         # Re-raise with clearer context for common errors
