@@ -9,17 +9,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core Infrastructure
 
-- [ ] **CORE-01**: System auto-detects available hardware (CUDA GPU, Apple MPS, CPU) and selects optimal device
+- [x] **CORE-01**: System auto-detects available hardware (CUDA GPU, Apple MPS, CPU) and selects optimal device
 - [ ] **CORE-02**: System validates Python version (≥3.10) and dependencies before execution
 - [ ] **CORE-03**: System auto-downloads and caches FunASR models to local `models/` directory
-- [ ] **CORE-04**: System handles GPU-to-CPU fallback gracefully with user notification
+- [x] **CORE-04**: System handles GPU-to-CPU fallback gracefully with user notification
 
 ### Audio Input
 
-- [ ] **AUDIO-01**: User can input audio files in MP3, WAV, M4A, FLAC formats
+- [x] **AUDIO-01**: User can input audio files in MP3, WAV, M4A, FLAC formats
 - [ ] **AUDIO-02**: User can input video files in MP4, AVI, MKV formats with automatic audio extraction
-- [ ] **AUDIO-03**: System automatically resamples audio to 16kHz for optimal recognition
-- [ ] **AUDIO-04**: System handles long audio (>1 hour) with VAD-based intelligent segmentation
+- [x] **AUDIO-03**: System automatically resamples audio to 16kHz for optimal recognition
+- [x] **AUDIO-04**: System handles long audio (>1 hour) with VAD-based intelligent segmentation
 - [ ] **AUDIO-05**: System provides progress indication during processing
 
 ### Transcription
@@ -37,12 +37,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Output Formats
 
-- [ ] **OUTP-01**: User can export transcription as plain TXT file
+- [x] **OUTP-01**: User can export transcription as plain TXT file
 - [ ] **OUTP-02**: User can export as SRT subtitle format with timestamps
 - [ ] **OUTP-03**: User can export as ASS subtitle format with speaker styling
-- [ ] **OUTP-04**: User can export as structured JSON with full metadata
+- [x] **OUTP-04**: User can export as structured JSON with full metadata
 - [ ] **OUTP-05**: User can export as Markdown with speaker sections
-- [ ] **OUTP-06**: Output files are saved in same directory as input by default
+- [x] **OUTP-06**: Output files are saved in same directory as input by default
 
 ### Hotwords
 
@@ -96,14 +96,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 1 | Pending |
+| CORE-01 | Phase 1 | Complete |
 | CORE-02 | Phase 1 | Pending |
 | CORE-03 | Phase 1 | Pending |
-| CORE-04 | Phase 1 | Pending |
-| AUDIO-01 | Phase 1 | Pending |
+| CORE-04 | Phase 1 | Complete |
+| AUDIO-01 | Phase 1 | Complete |
 | AUDIO-02 | Phase 2 | Pending |
-| AUDIO-03 | Phase 1 | Pending |
-| AUDIO-04 | Phase 1 | Pending |
+| AUDIO-03 | Phase 1 | Complete |
+| AUDIO-04 | Phase 1 | Complete |
 | AUDIO-05 | Phase 3 | Pending |
 | TRAN-01 | Phase 1 | Pending |
 | TRAN-02 | Phase 1 | Pending |
@@ -112,12 +112,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SPKR-01 | Phase 2 | Pending |
 | SPKR-02 | Phase 2 | Pending |
 | SPKR-03 | Phase 2 | Pending |
-| OUTP-01 | Phase 1 | Pending |
+| OUTP-01 | Phase 1 | Complete |
 | OUTP-02 | Phase 3 | Pending |
 | OUTP-03 | Phase 3 | Pending |
-| OUTP-04 | Phase 1 | Pending |
+| OUTP-04 | Phase 1 | Complete |
 | OUTP-05 | Phase 3 | Pending |
-| OUTP-06 | Phase 1 | Pending |
+| OUTP-06 | Phase 1 | Complete |
 | HOTW-01 | Phase 4 | Pending |
 | HOTW-02 | Phase 4 | Pending |
 | HOTW-03 | Phase 4 | Pending |

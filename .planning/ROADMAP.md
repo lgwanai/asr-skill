@@ -33,8 +33,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 01-01-PLAN.md — Device detection and audio preprocessing modules
-- [ ] 01-02-PLAN.md — Output formatters and path utilities
+- [x] 01-01-PLAN.md — Device detection and audio preprocessing modules
+- [x] 01-02-PLAN.md — Output formatters and path utilities
 - [ ] 01-03-PLAN.md — FunASR model pipeline and Python API
 - [ ] 01-04-PLAN.md — CLI entry point and package configuration
 
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core ASR Pipeline | 0/4 | Ready to execute | - |
+| 1. Core ASR Pipeline | 2/4 | In progress | 01-01, 01-02 |
 | 2. Speaker Diarization | 0/TBD | Not started | - |
 | 3. Enhanced Outputs | 0/TBD | Not started | - |
 | 4. Hotwords | 0/TBD | Not started | - |

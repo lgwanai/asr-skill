@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 1 of 5 (Core ASR Pipeline)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-13 — Roadmap created, awaiting Phase 1 planning
+Plan: 2 of 4 in current phase
+Status: Executing
+Last activity: 2026-03-14 — Completed plan 02: Output formatters
 
-Progress: [----------] 0%
+Progress: [=====-----] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: N/A
-- Total execution time: 0.0 hours
+- Total plans completed: 2
+- Average duration: 1.5 min
+- Total execution time: 0.05 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-core-asr-pipeline | 2 | 4 | 1.5 min |
 
 **Recent Trend:**
 - Last 5 plans: N/A
@@ -42,7 +42,11 @@ Progress: [----------] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-None yet.
+1. MPS detection prioritized over CUDA for Apple Silicon support
+2. GPU fallback detection checks for hardware presence vs availability
+3. SRT-style HH:MM:SS.mmm timestamp format for all output
+4. Chinese text preserved in JSON with ensure_ascii=False
+5. Default confidence value 1.0 when model doesn't provide
 
 ### Pending Todos
 
@@ -54,9 +58,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13
-Stopped at: Roadmap creation complete, ready to begin Phase 1 planning
-Resume file: None
+Last session: 2026-03-14
+Stopped at: Completed 01-02-PLAN.md (Output formatters)
+Resume file: .planning/phases/01-core-asr-pipeline/01-02-SUMMARY.md
 
 ---
 *State initialized: 2026-03-13*
