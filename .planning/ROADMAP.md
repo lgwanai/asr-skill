@@ -30,7 +30,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. System automatically detects and uses optimal hardware (CUDA GPU, Apple MPS, or CPU fallback)
   4. User receives transcription output as TXT and JSON files in the same directory as input
   5. System processes audio files longer than 1 hour without crashing
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
+
+Plans:
+- [ ] 01-01-PLAN.md — Device detection and audio preprocessing modules
+- [ ] 01-02-PLAN.md — Output formatters and path utilities
+- [ ] 01-03-PLAN.md — FunASR model pipeline and Python API
+- [ ] 01-04-PLAN.md — CLI entry point and package configuration
 
 ### Phase 2: Speaker Diarization
 **Goal**: Users can identify and distinguish multiple speakers in transcribed audio
@@ -83,7 +89,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core ASR Pipeline | 0/TBD | Not started | - |
+| 1. Core ASR Pipeline | 0/4 | Ready to execute | - |
 | 2. Speaker Diarization | 0/TBD | Not started | - |
 | 3. Enhanced Outputs | 0/TBD | Not started | - |
 | 4. Hotwords | 0/TBD | Not started | - |
@@ -92,3 +98,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 ---
 *Roadmap created: 2026-03-13*
 *Depth: standard*
+*Last updated: 2026-03-13 after Phase 1 planning*
