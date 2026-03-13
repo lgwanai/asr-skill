@@ -13,7 +13,7 @@ Build a local speech recognition tool that delivers high-accuracy Chinese transc
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Core ASR Pipeline** - Foundation for audio transcription with hardware auto-detection
-- [ ] **Phase 2: Speaker Diarization** - Multi-speaker identification and labeling
+- [x] **Phase 2: Speaker Diarization** - Multi-speaker identification and labeling
 - [ ] **Phase 3: Enhanced Outputs** - Subtitle formats, progress indication, and confidence scores
 - [ ] **Phase 4: Hotwords** - Domain-specific vocabulary enhancement via config and CLI
 - [ ] **Phase 5: Integration** - CLI, Claude Code Skill, and Python module interfaces
@@ -53,7 +53,7 @@ Plans:
 - [x] 02-01-PLAN.md — Video extraction module with FFmpeg CLI
 - [x] 02-02-PLAN.md — Speaker diarization model and formatters
 - [x] 02-03-PLAN.md — API integration with video and speaker support
-- [ ] 02-04-PLAN.md — End-to-end verification checkpoint
+- [x] 02-04-PLAN.md — End-to-end verification checkpoint
 
 ### Phase 3: Enhanced Outputs
 **Goal**: Users can export transcriptions in multiple formats suitable for different use cases
@@ -65,7 +65,12 @@ Plans:
   3. User can export transcription as ASS subtitle format with speaker-based styling
   4. User can export transcription as Markdown with speaker sections
   5. User can see confidence scores for each word in JSON output
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [ ] 03-01-PLAN.md — SRT, ASS, and Markdown formatters
+- [ ] 03-02-PLAN.md — Progress indication and word-level confidence
+- [ ] 03-03-PLAN.md — CLI and API integration for new formats
 
 ### Phase 4: Hotwords
 **Goal**: Users can improve recognition accuracy for domain-specific terms
@@ -96,12 +101,12 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core ASR Pipeline | 4/4 | Complete | 01-01, 01-02, 01-03, 01-04 |
-| 2. Speaker Diarization | 3/4 | In Progress | 02-01, 02-02, 02-03 |
-| 3. Enhanced Outputs | 0/TBD | Not started | - |
+| 2. Speaker Diarization | 4/4 | Complete | 02-01, 02-02, 02-03, 02-04 |
+| 3. Enhanced Outputs | 0/3 | Planned | - |
 | 4. Hotwords | 0/TBD | Not started | - |
 | 5. Integration | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-03-13*
 *Depth: standard*
-*Last updated: 2026-03-14 after Phase 2 planning*
+*Last updated: 2026-03-14 after Phase 3 planning*
