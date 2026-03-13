@@ -115,7 +115,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OUTP-01 | Phase 1 | Pending |
 | OUTP-02 | Phase 3 | Pending |
 | OUTP-03 | Phase 3 | Pending |
-| OUTP-04 | Phase 3 | Pending |
+| OUTP-04 | Phase 1 | Pending |
 | OUTP-05 | Phase 3 | Pending |
 | OUTP-06 | Phase 1 | Pending |
 | HOTW-01 | Phase 4 | Pending |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 after roadmap creation*
