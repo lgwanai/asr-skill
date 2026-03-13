@@ -364,3 +364,83 @@ def format_ass(result: dict[str, Any]) -> str:
         lines.append(f"Dialogue: 0,{start},{end},{style},,0,0,0,,{text}")
 
     return "\n".join(lines)
+
+
+def format_markdown(result: dict[str, Any]) -> str:
+    """Format transcription result as Markdown with speaker sections.
+
+    Creates a readable Markdown document where segments are grouped by speaker.
+    Each speaker section contains a header and a list of segments with timestamps.
+    Overlapping segments are marked with [OVERLAP].
+
+    Output structure:
+    - Title: "# Transcription"
+    - For each speaker (in order of first appearance):
+      - Header: "## Speaker A" or "## Unknown Speaker"
+      - List items with timestamps: "- `[HH:MM:SS.mmm]` [OVERLAP] text"
+
+    Args:
+        result: Transcription result dict with 'sentence_info' or 'sentences' key
+                containing list of segment dicts
+
+    Returns:
+        str: Markdown formatted document
+
+    Example:
+        >>> result = {
+        ...     "sentence_info": [
+        ...         {"sentence": "Hello", "start": 0, "end": 1500, "spk": 0},
+        ...         {"sentence": "Goodbye", "start": 2000, "end": 3000, "spk": 1}
+        ...     ]
+        ... }
+        >>> output = format_markdown(result)
+        >>> '# Transcription' in output
+        True
+        >>> '## Speaker A' in output
+        True
+        >>> '## Speaker B' in output
+        True
+    """
+    segments = result.get("sentence_info") or result.get("sentences", [])
+
+    if not segments:
+        return "# Transcription\n\n*No content*\n"
+
+    # Detect overlaps (time-based fallback)
+    segments = detect_overlaps(segments)
+
+    # Group by speaker
+    by_speaker: dict[int, list] = {}
+    for seg in segments:
+        spk = seg.get("spk", -1)  # -1 for unknown speaker
+        if spk not in by_speaker:
+            by_speaker[spk] = []
+        by_speaker[spk].append(seg)
+
+    lines = ["# Transcription\n"]
+
+    # Determine speaker order by first appearance
+    speaker_order: list[int] = []
+    seen: set[int] = set()
+    for seg in segments:
+        spk = seg.get("spk", -1)
+        if spk not in seen:
+            speaker_order.append(spk)
+            seen.add(spk)
+
+    # Output each speaker's segments
+    for spk in speaker_order:
+        if spk == -1:
+            lines.append("## Unknown Speaker\n")
+        else:
+            lines.append(f"## {format_speaker_label(spk)}\n")
+
+        for seg in by_speaker[spk]:
+            timestamp = format_timestamp(seg["start"])
+            text = seg.get("sentence", seg.get("text", ""))
+            overlap = " [OVERLAP]" if seg.get("is_overlap") else ""
+            lines.append(f"- `[{timestamp}]`{overlap} {text}")
+
+        lines.append("")  # Blank line between speakers
+
+    return "\n".join(lines)
