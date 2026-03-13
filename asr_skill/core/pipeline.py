@@ -32,6 +32,8 @@ def transcribe(model: Any, audio_path: str, device: str) -> dict[str, Any] | Non
         dict | None: Transcription result with keys:
             - text: Full transcription text
             - sentences: List of segment dicts with text, start, end, confidence
+            - sentence_info: List of segment dicts with speaker labels (when diarization enabled)
+                Each segment has: sentence, start, end, spk (speaker ID), confidence
             Returns None if transcription produces no results.
 
     Raises:
@@ -44,10 +46,10 @@ def transcribe(model: Any, audio_path: str, device: str) -> dict[str, Any] | Non
         - batch_size_s=300 handles long audio without memory explosion
 
     Example:
-        >>> model = create_pipeline("cuda:0")
+        >>> model = create_pipeline("cuda:0", diarize=True)
         >>> audio_path = preprocess_audio("input.mp3")
         >>> result = transcribe(model, audio_path, "cuda:0")
-        >>> print(result["text"])
+        >>> print(result["sentence_info"][0]["spk"])  # Speaker ID: 0, 1, 2...
     """
     try:
         result = model.generate(
