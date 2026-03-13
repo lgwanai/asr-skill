@@ -26,6 +26,7 @@ Features:
 """
 
 from pathlib import Path
+from typing import Callable
 
 from asr_skill.core.device import get_device_with_fallback
 from asr_skill.core.models import create_pipeline
@@ -45,6 +46,7 @@ def transcribe(
     output_dir: str | None = None,
     format: str = "txt",
     diarize: bool = True,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> dict[str, str | list]:
     """Transcribe audio or video file to text with optional speaker diarization.
 
@@ -61,6 +63,9 @@ def transcribe(
         format: Output format - "txt" or "json". Default: "txt".
         diarize: Enable speaker diarization. Default: True.
                  When enabled, output includes speaker labels (Speaker A, B, C...).
+        progress_callback: Optional callback for progress updates.
+                 Signature: callback(current: int, total: int)
+                 Called with sample counts during processing.
 
     Returns:
         dict with keys:
@@ -91,7 +96,7 @@ def transcribe(
     # Preprocess input (handles both audio and video)
     with preprocess_input(input_file) as audio_path:
         # Run transcription
-        result = _transcribe(model, audio_path, device)
+        result = _transcribe(model, audio_path, device, progress_callback)
 
     if result is None:
         raise RuntimeError(f"Transcription returned no results for {input_file}")

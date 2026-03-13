@@ -15,6 +15,7 @@ import sys
 import click
 from rich.console import Console
 from rich.panel import Panel
+from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
 from asr_skill import __version__
 
@@ -57,12 +58,30 @@ def transcribe_cmd(input_file: str, output: str | None, format: str) -> None:
             "[yellow]Warning: GPU not available, using CPU (slower)[/yellow]"
         )
 
-    # Run transcription
+    # Run transcription with progress display
     try:
         from asr_skill import transcribe
 
         console.print(f"[blue]Transcribing: {input_file}[/blue]")
-        result = transcribe(input_file, output, format)
+
+        # Create progress bar with transcription
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TimeRemainingColumn(),
+            console=console,
+        ) as progress:
+            task_id = progress.add_task("Transcribing...", total=None)
+
+            def progress_callback(current: int, total: int):
+                """Update progress bar with transcription progress."""
+                if total > 0:
+                    progress.update(task_id, completed=current, total=total)
+
+            result = transcribe(
+                input_file, output, format, progress_callback=progress_callback
+            )
 
         # Show speaker count if diarization was enabled
         speakers = result.get("speakers", [])
