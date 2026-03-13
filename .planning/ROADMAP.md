@@ -12,7 +12,7 @@ Build a local speech recognition tool that delivers high-accuracy Chinese transc
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Core ASR Pipeline** - Foundation for audio transcription with hardware auto-detection
+- [x] **Phase 1: Core ASR Pipeline** - Foundation for audio transcription with hardware auto-detection
 - [ ] **Phase 2: Speaker Diarization** - Multi-speaker identification and labeling
 - [ ] **Phase 3: Enhanced Outputs** - Subtitle formats, progress indication, and confidence scores
 - [ ] **Phase 4: Hotwords** - Domain-specific vocabulary enhancement via config and CLI
@@ -36,7 +36,7 @@ Plans:
 - [x] 01-01-PLAN.md — Device detection and audio preprocessing modules
 - [x] 01-02-PLAN.md — Output formatters and path utilities
 - [x] 01-03-PLAN.md — FunASR model pipeline and Python API
-- [ ] 01-04-PLAN.md — CLI entry point and package configuration
+- [x] 01-04-PLAN.md — CLI entry point and package configuration
 
 ### Phase 2: Speaker Diarization
 **Goal**: Users can identify and distinguish multiple speakers in transcribed audio
@@ -47,7 +47,13 @@ Plans:
   2. User sees different speakers labeled (Speaker A, Speaker B, etc.) in the transcription output
   3. User can see when each speaker starts and stops speaking (timestamp ranges per speaker)
   4. Overlapping speech segments are marked in the output
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
+
+Plans:
+- [ ] 02-01-PLAN.md — Video extraction module with FFmpeg CLI
+- [ ] 02-02-PLAN.md — Speaker diarization model and formatters
+- [ ] 02-03-PLAN.md — API integration with video and speaker support
+- [ ] 02-04-PLAN.md — End-to-end verification checkpoint
 
 ### Phase 3: Enhanced Outputs
 **Goal**: Users can export transcriptions in multiple formats suitable for different use cases
@@ -89,8 +95,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core ASR Pipeline | 3/4 | In progress | 01-01, 01-02, 01-03 |
-| 2. Speaker Diarization | 0/TBD | Not started | - |
+| 1. Core ASR Pipeline | 4/4 | Complete | 01-01, 01-02, 01-03, 01-04 |
+| 2. Speaker Diarization | 0/4 | Ready for execution | - |
 | 3. Enhanced Outputs | 0/TBD | Not started | - |
 | 4. Hotwords | 0/TBD | Not started | - |
 | 5. Integration | 0/TBD | Not started | - |
@@ -98,4 +104,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 ---
 *Roadmap created: 2026-03-13*
 *Depth: standard*
-*Last updated: 2026-03-14 after Phase 1 plan 03 completion*
+*Last updated: 2026-03-14 after Phase 2 planning*
