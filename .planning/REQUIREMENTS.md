@@ -38,10 +38,10 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Output Formats
 
 - [x] **OUTP-01**: User can export transcription as plain TXT file
-- [ ] **OUTP-02**: User can export as SRT subtitle format with timestamps
-- [ ] **OUTP-03**: User can export as ASS subtitle format with speaker styling
+- [x] **OUTP-02**: User can export as SRT subtitle format with timestamps
+- [x] **OUTP-03**: User can export as ASS subtitle format with speaker styling
 - [x] **OUTP-04**: User can export as structured JSON with full metadata
-- [ ] **OUTP-05**: User can export as Markdown with speaker sections
+- [x] **OUTP-05**: User can export as Markdown with speaker sections
 - [x] **OUTP-06**: Output files are saved in same directory as input by default
 
 ### Hotwords
@@ -113,10 +113,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SPKR-02 | Phase 2 | Complete |
 | SPKR-03 | Phase 2 | Complete |
 | OUTP-01 | Phase 1 | Complete |
-| OUTP-02 | Phase 3 | Pending |
-| OUTP-03 | Phase 3 | Pending |
+| OUTP-02 | Phase 3 | Complete |
+| OUTP-03 | Phase 3 | Complete |
 | OUTP-04 | Phase 1 | Complete |
-| OUTP-05 | Phase 3 | Pending |
+| OUTP-05 | Phase 3 | Complete |
 | OUTP-06 | Phase 1 | Complete |
 | HOTW-01 | Phase 4 | Pending |
 | HOTW-02 | Phase 4 | Pending |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-14 after Phase 2 plan 03 completion*
+*Last updated: 2026-03-14 after 03-01 completion*
