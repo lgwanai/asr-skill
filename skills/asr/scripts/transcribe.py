@@ -2,13 +2,16 @@
 """Batch transcription script for ASR skill.
 
 Usage:
-    python transcribe.py <input_file> [format] [output_dir]
-    python transcribe.py audio.mp3 json ./output
-    python transcribe.py video.mp4 srt
+    python3 transcribe.py <input_file> [-f format] [-o output_dir]
+
+Examples:
+    python3 transcribe.py audio.mp3
+    python3 transcribe.py audio.mp3 -f json -o ./output
+    python3 transcribe.py video.mp4 -f srt
 
 Supported input formats:
-    Audio: .mp3, .wav, .m4a, .flac
-    Video: .mp4, .avi, .mkv
+    Audio: .mp3, .wav, .m4a, .flac, .ogg, .opus
+    Video: .mp4, .avi, .mkv, .mov, .webm
 
 Output formats:
     txt  - Plain text with timestamps (default)
@@ -19,46 +22,90 @@ Output formats:
 """
 
 import sys
+import os
+import argparse
 from pathlib import Path
 
-# Add parent directories to path for imports
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
+# Add project root to python path to allow importing asr_skill
+# This assumes the script is located at skills/asr/scripts/transcribe.py
+# and the package is at asr_skill/
+current_dir = Path(__file__).resolve().parent
+project_root = current_dir.parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-from asr_skill import transcribe, SUPPORTED_FORMATS, SUPPORTED_VIDEO_FORMATS
+try:
+    from asr_skill import transcribe
+    from asr_skill.core.device import get_device_with_fallback
+except ImportError:
+    print("Error: Could not import 'asr_skill' package.")
+    print(f"Checked path: {project_root}")
+    print("Please ensure you are running this script from within the project or the package is installed.")
+    sys.exit(1)
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(__doc__)
-        print(f"Supported audio formats: {SUPPORTED_FORMATS}")
-        print(f"Supported video formats: {SUPPORTED_VIDEO_FORMATS}")
+    parser = argparse.ArgumentParser(
+        description="Transcribe audio/video files using local ASR with speaker diarization.",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("input_file", help="Path to input audio or video file")
+    parser.add_argument(
+        "-f", "--format", 
+        choices=["txt", "json", "srt", "ass", "md"], 
+        default="txt",
+        help="Output format (default: txt)"
+    )
+    parser.add_argument(
+        "-o", "--output-dir", 
+        help="Directory to save output (default: same as input file)"
+    )
+    
+    args = parser.parse_args()
+    input_path = Path(args.input_file).resolve()
+
+    if not input_path.exists():
+        print(f"Error: File not found: {input_path}")
         sys.exit(1)
 
-    input_file = sys.argv[1]
-    format_type = sys.argv[2] if len(sys.argv) > 2 else "txt"
-    output_dir = sys.argv[3] if len(sys.argv) > 3 else None
+    # Check device status
+    device, fallback = get_device_with_fallback()
+    if fallback:
+        print("Warning: GPU not available, using CPU (slower).")
+    else:
+        print(f"Using device: {device}")
 
-    # Validate input file
-    if not Path(input_file).exists():
-        print(f"Error: File not found: {input_file}")
-        sys.exit(1)
-
-    # Validate format
-    valid_formats = ["txt", "json", "srt", "ass", "md"]
-    if format_type not in valid_formats:
-        print(f"Error: Invalid format '{format_type}'")
-        print(f"Valid formats: {valid_formats}")
-        sys.exit(1)
-
+    print(f"Transcribing: {input_path.name}")
+    print(f"Output format: {args.format}")
+    
     try:
-        result = transcribe(input_file, output_dir=output_dir, format=format_type)
-        print(f"\n✓ Transcription complete!")
-        print(f"  Output: {result['output_path']}")
+        # Define a simple progress callback since we don't have rich here (or assume we might not)
+        # But if the package uses rich, we can't easily hook into it without using the CLI's approach.
+        # The transcribe function accepts a progress_callback.
+        
+        def simple_progress(current, total):
+            if total > 0:
+                percent = int(current / total * 100)
+                sys.stdout.write(f"\rProgress: {percent}%")
+                sys.stdout.flush()
+        
+        result = transcribe(
+            str(input_path), 
+            output_dir=args.output_dir, 
+            format=args.format,
+            progress_callback=simple_progress
+        )
+        
+        print("\n\n✓ Transcription complete!")
+        print(f"  Output saved to: {result['output_path']}")
+        
         if 'speakers' in result and result['speakers']:
-            print(f"  Speakers: {', '.join(result['speakers'])}")
+            print(f"  Speakers detected: {', '.join(result['speakers'])}")
+            
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"\nError during transcription: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 

@@ -14,6 +14,7 @@ The priority order ensures:
 3. All other systems gracefully fall back to CPU
 """
 
+import os
 import torch
 
 
@@ -25,6 +26,14 @@ def get_device() -> str:
     Returns:
         str: Device string - "mps", "cuda:0", or "cpu"
     """
+    # Allow forcing CPU via environment variable
+    if os.environ.get("ASR_FORCE_CPU") == "1":
+        return "cpu"
+
+    # NOTE: MPS (Metal Performance Shaders) on Apple Silicon has issues with float64.
+    # We now handle this in models.py by setting default dtype to float32 when MPS is used.
+    # So we can safely default to MPS on macOS.
+    
     # Check Apple Silicon MPS first (highest priority)
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         return "mps"

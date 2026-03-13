@@ -424,38 +424,20 @@ def format_markdown(result: dict[str, Any]) -> str:
     # Detect overlaps (time-based fallback)
     segments = detect_overlaps(segments)
 
-    # Group by speaker
-    by_speaker: dict[int, list] = {}
-    for seg in segments:
-        spk = seg.get("spk", -1)  # -1 for unknown speaker
-        if spk not in by_speaker:
-            by_speaker[spk] = []
-        by_speaker[spk].append(seg)
+    # Sort by timestamp just in case
+    segments.sort(key=lambda x: x.get("start", 0))
 
     lines = ["# Transcription\n"]
 
-    # Determine speaker order by first appearance
-    speaker_order: list[int] = []
-    seen: set[int] = set()
     for seg in segments:
         spk = seg.get("spk", -1)
-        if spk not in seen:
-            speaker_order.append(spk)
-            seen.add(spk)
-
-    # Output each speaker's segments
-    for spk in speaker_order:
-        if spk == -1:
-            lines.append("## Unknown Speaker\n")
-        else:
-            lines.append(f"## {format_speaker_label(spk)}\n")
-
-        for seg in by_speaker[spk]:
-            timestamp = format_timestamp(seg["start"])
-            text = seg.get("sentence", seg.get("text", ""))
-            overlap = " [OVERLAP]" if seg.get("is_overlap") else ""
-            lines.append(f"- `[{timestamp}]`{overlap} {text}")
-
-        lines.append("")  # Blank line between speakers
+        speaker_label = format_speaker_label(spk) if spk != -1 else "Unknown Speaker"
+        
+        timestamp = format_timestamp(seg["start"])
+        text = seg.get("sentence", seg.get("text", ""))
+        overlap = " [OVERLAP]" if seg.get("is_overlap") else ""
+        
+        # Format: - `[HH:MM:SS.mmm]` **Speaker A**: text
+        lines.append(f"- `[{timestamp}]`{overlap} **{speaker_label}**: {text}")
 
     return "\n".join(lines)

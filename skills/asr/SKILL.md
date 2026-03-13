@@ -26,19 +26,19 @@ This skill triggers when the user:
 
 ```bash
 # Transcribe audio file (outputs TXT by default)
-asr-skill path/to/audio.mp3
+python3 skills/asr/scripts/transcribe.py path/to/audio.mp3
 
 # Transcribe video file
-asr-skill path/to/video.mp4
+python3 skills/asr/scripts/transcribe.py path/to/video.mp4
 ```
 
 ### Output Formats
 
 ```bash
-asr-skill audio.mp3 -f json   # Structured JSON with metadata
-asr-skill audio.mp3 -f srt    # SubRip subtitles
-asr-skill audio.mp3 -f ass    # ASS/SSA subtitles with speaker styling
-asr-skill audio.mp3 -f md     # Markdown with speaker sections
+python3 skills/asr/scripts/transcribe.py audio.mp3 -f json   # Structured JSON with metadata
+python3 skills/asr/scripts/transcribe.py audio.mp3 -f srt    # SubRip subtitles
+python3 skills/asr/scripts/transcribe.py audio.mp3 -f ass    # ASS/SSA subtitles with speaker styling
+python3 skills/asr/scripts/transcribe.py audio.mp3 -f md     # Markdown with speaker sections
 ```
 
 ### Python API

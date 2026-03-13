@@ -63,7 +63,7 @@ def create_pipeline(device: str, model_dir: str = MODEL_DIR, diarize: bool = Tru
         >>> result = model.generate(input="audio.wav", device=device)
     """
     model_kwargs = {
-        "model": "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+        "model": "iic/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
         "vad_model": "iic/speech_fsmn_vad_zh-cn-16k-common-pytorch",
         "punc_model": "iic/punc_ct-transformer_cn-en-common-vocab471067-large",
         "device": device,
@@ -75,5 +75,10 @@ def create_pipeline(device: str, model_dir: str = MODEL_DIR, diarize: bool = Tru
     if diarize:
         model_kwargs["spk_model"] = "iic/speech_campplus_sv_zh-cn_16k-common"
         model_kwargs["spk_mode"] = "punc_segment"
+
+    if device == "mps":
+        # Force float32 for MPS to avoid "MPS framework doesn't support float64" error
+        import torch
+        torch.set_default_dtype(torch.float32)
 
     return AutoModel(**model_kwargs)

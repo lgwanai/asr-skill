@@ -1,0 +1,19 @@
+# User specific files
+0313联通支付需求澄清.md
+0313联通支付需求澄清.m4a
+0313联通支付需求澄清_chronological.md
+asr-skill.zip
+reorder_transcription.py
+
+# Tool configs and caches
+.claude/
+.claude-plugin/
+.planning/
+.ruff_cache/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Build artifacts
+dist/
