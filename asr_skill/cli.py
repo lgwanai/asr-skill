@@ -1,15 +1,13 @@
 """CLI entry point for ASR Skill.
 
-This module provides the command-line interface for transcribing audio files.
-It handles user input validation, hardware detection with warnings, and
-displays clear error messages for any issues.
+This module provides the command-line interface for transcribing audio
+and video files using the ASR Skill package.
 
 Usage:
-    asr-skill <input_file> [-o OUTPUT] [-f FORMAT]
-
-Examples:
-    asr-skill audio.mp3
-    asr-skill meeting.m4a -o ./transcripts -f json
+    asr-skill input.mp3              # Transcribe audio file
+    asr-skill video.mp4              # Transcribe video file
+    asr-skill input.mp3 -o ./output  # Custom output directory
+    asr-skill input.mp3 -f json      # JSON output format
 """
 
 import sys
@@ -39,9 +37,9 @@ from asr_skill import __version__
 )
 @click.version_option(version=__version__, prog_name="asr-skill")
 def transcribe_cmd(input_file: str, output: str | None, format: str) -> None:
-    """Transcribe audio file to text with timestamps.
+    """Transcribe audio or video file to text with timestamps.
 
-    INPUT_FILE is the path to the audio file (MP3, WAV, M4A, FLAC).
+    INPUT_FILE is the path to the audio (MP3, WAV, M4A, FLAC) or video (MP4, AVI, MKV) file.
     """
     console = Console()
 
@@ -65,6 +63,12 @@ def transcribe_cmd(input_file: str, output: str | None, format: str) -> None:
 
         console.print(f"[blue]Transcribing: {input_file}[/blue]")
         result = transcribe(input_file, output, format)
+
+        # Show speaker count if diarization was enabled
+        speakers = result.get("speakers", [])
+        if speakers:
+            console.print(f"[green]Speakers detected: {', '.join(speakers)}[/green]")
+
         console.print(
             Panel(f"[green]Output saved to: {result['output_path']}[/green]")
         )
