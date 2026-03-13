@@ -1,0 +1,8 @@
+{
+  "name": "asr-skill",
+  "description": "Local audio/video transcription with speaker diarization. Transcribe MP3, WAV, MP4, etc. to TXT, JSON, SRT, ASS, Markdown with automatic speaker identification.",
+  "author": {
+    "name": "ASR Skill",
+    "email": "noreply@example.com"
+  }
+}
