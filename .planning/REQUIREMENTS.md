@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Audio Input
 
 - [x] **AUDIO-01**: User can input audio files in MP3, WAV, M4A, FLAC formats
-- [ ] **AUDIO-02**: User can input video files in MP4, AVI, MKV formats with automatic audio extraction
+- [x] **AUDIO-02**: User can input video files in MP4, AVI, MKV formats with automatic audio extraction
 - [x] **AUDIO-03**: System automatically resamples audio to 16kHz for optimal recognition
 - [x] **AUDIO-04**: System handles long audio (>1 hour) with VAD-based intelligent segmentation
 - [ ] **AUDIO-05**: System provides progress indication during processing
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
 | AUDIO-01 | Phase 1 | Complete |
-| AUDIO-02 | Phase 2 | Pending |
+| AUDIO-02 | Phase 2 | Complete |
 | AUDIO-03 | Phase 1 | Complete |
 | AUDIO-04 | Phase 1 | Complete |
 | AUDIO-05 | Phase 3 | Pending |
