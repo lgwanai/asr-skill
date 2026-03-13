@@ -32,9 +32,9 @@ from asr_skill import __version__
 @click.option(
     "-f",
     "--format",
-    type=click.Choice(["txt", "json"]),
+    type=click.Choice(["txt", "json", "srt", "ass", "md"]),
     default="txt",
-    help="Output format",
+    help="Output format (txt, json, srt, ass, md)",
 )
 @click.version_option(version=__version__, prog_name="asr-skill")
 def transcribe_cmd(input_file: str, output: str | None, format: str) -> None:
