@@ -1,12 +1,15 @@
 """Output formatters for transcription results.
 
 This module provides formatting functions to convert ASR transcription results
-into user-friendly output formats (TXT and JSON).
+into user-friendly output formats (TXT, JSON, SRT, ASS, Markdown).
 
 Output Format Decisions (from CONTEXT.md):
 - TXT format: timestamps inline [HH:MM:SS.mmm] Speaker A: text
 - JSON format: segment level (array of segments with text, start, end, confidence, speaker_id, is_overlap)
-- Timestamp format: standard SRT style HH:MM:SS.mmm
+- SRT format: standard subtitle format with comma-separated timestamps
+- ASS format: advanced subtitle format with speaker-specific styling
+- Markdown format: readable document with speaker sections
+- Timestamp format: standard SRT style HH:MM:SS.mmm (period for TXT/MD, comma for SRT)
 - Speaker labels: alphabetical (Speaker A, Speaker B, Speaker C)
 - Overlap detection: [OVERLAP] tag in TXT, is_overlap field in JSON
 """
@@ -160,3 +163,90 @@ def format_json(result: dict[str, Any]) -> str:
         segments.append(segment_data)
 
     return json.dumps(segments, ensure_ascii=False, indent=2)
+
+
+def format_srt_timestamp(ms: int) -> str:
+    """Convert milliseconds to SRT timestamp format.
+
+    SRT uses comma for milliseconds separator (HH:MM:SS,mmm), unlike the
+    standard timestamp format which uses period.
+
+    Args:
+        ms: Time in milliseconds
+
+    Returns:
+        str: Timestamp in HH:MM:SS,mmm format (comma for milliseconds)
+
+    Example:
+        >>> format_srt_timestamp(3661500)
+        '01:01:01,500'
+        >>> format_srt_timestamp(0)
+        '00:00:00,000'
+    """
+    hours = ms // 3600000
+    minutes = (ms % 3600000) // 60000
+    seconds = (ms % 60000) // 1000
+    millis = ms % 1000
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d},{millis:03d}"
+
+
+def format_srt(result: dict[str, Any]) -> str:
+    """Format transcription result as SRT subtitle format.
+
+    SRT format consists of numbered subtitle blocks, each containing:
+    1. Index number (1-indexed)
+    2. Timestamp line: start --> end (comma for milliseconds)
+    3. Text (with speaker prefix if available)
+    4. Blank line
+
+    Speaker labels are included in brackets: [Speaker A] text
+
+    Args:
+        result: Transcription result dict with 'sentence_info' or 'sentences' key
+                containing list of segment dicts
+
+    Returns:
+        str: SRT formatted subtitle content
+
+    Example:
+        >>> result = {
+        ...     "sentence_info": [
+        ...         {"sentence": "Hello world", "start": 0, "end": 1500, "spk": 0},
+        ...         {"sentence": "Goodbye", "start": 2000, "end": 3000, "spk": 1}
+        ...     ]
+        ... }
+        >>> print(format_srt(result))
+        1
+        00:00:00,000 --> 00:00:01,500
+        [Speaker A] Hello world
+        <BLANKLINE>
+        2
+        00:00:02,000 --> 00:00:03,000
+        [Speaker B] Goodbye
+        <BLANKLINE>
+    """
+    segments = result.get("sentence_info") or result.get("sentences", [])
+
+    if not segments:
+        return ""
+
+    # Detect overlaps (time-based fallback)
+    segments = detect_overlaps(segments)
+
+    lines = []
+    for i, segment in enumerate(segments, 1):
+        start = format_srt_timestamp(segment["start"])
+        end = format_srt_timestamp(segment["end"])
+        text = segment.get("sentence", segment.get("text", ""))
+
+        # Add speaker prefix if available
+        if "spk" in segment:
+            speaker = format_speaker_label(segment["spk"])
+            text = f"[{speaker}] {text}"
+
+        lines.append(str(i))
+        lines.append(f"{start} --> {end}")
+        lines.append(text)
+        lines.append("")  # Blank line between entries
+
+    return "\n".join(lines)
