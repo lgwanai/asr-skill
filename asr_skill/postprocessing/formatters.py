@@ -20,6 +20,29 @@ from typing import Any
 from asr_skill.postprocessing.speakers import detect_overlaps, format_speaker_label
 
 
+# ASS subtitle format header with speaker-specific styles
+# Colors are in ASS BGR format: &H00BBGGRR (note: BGR, not RGB)
+# High-contrast colors for speaker differentiation
+ASS_HEADER = """[Script Info]
+Title: ASR Transcription
+ScriptType: v4.00+
+PlayResX: 1280
+PlayResY: 720
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Microsoft YaHei,48,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: SpeakerA,Microsoft YaHei,48,&H0000FFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: SpeakerB,Microsoft YaHei,48,&H00FF00FF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: SpeakerC,Microsoft YaHei,48,&H00FFFF00,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: SpeakerD,Microsoft YaHei,48,&H0000FF00,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: SpeakerE,Microsoft YaHei,48,&H000080FF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+
+
 def format_timestamp(ms: int) -> str:
     """Convert milliseconds to SRT-style timestamp format.
 
@@ -248,5 +271,96 @@ def format_srt(result: dict[str, Any]) -> str:
         lines.append(f"{start} --> {end}")
         lines.append(text)
         lines.append("")  # Blank line between entries
+
+    return "\n".join(lines)
+
+
+def format_ass_timestamp(ms: int) -> str:
+    """Convert milliseconds to ASS timestamp format.
+
+    ASS uses H:MM:SS.cc format where cc is centiseconds (1/100 second),
+    not milliseconds. Hours are not zero-padded.
+
+    Args:
+        ms: Time in milliseconds
+
+    Returns:
+        str: Timestamp in H:MM:SS.cc format
+
+    Example:
+        >>> format_ass_timestamp(3661500)
+        '1:01:01.50'
+        >>> format_ass_timestamp(0)
+        '0:00:00.00'
+    """
+    hours = ms // 3600000
+    minutes = (ms % 3600000) // 60000
+    seconds = (ms % 60000) // 1000
+    centis = (ms % 1000) // 10
+    return f"{hours}:{minutes:02d}:{seconds:02d}.{centis:02d}"
+
+
+def format_ass(result: dict[str, Any]) -> str:
+    """Format transcription result as ASS subtitle format with speaker styling.
+
+    ASS format provides advanced styling capabilities. This implementation
+    uses speaker-specific styles with distinct colors for differentiation.
+
+    The output includes:
+    - Script Info section with metadata
+    - V4+ Styles section with Default and SpeakerA-E styles
+    - Events section with Dialogue lines
+
+    Speaker colors (BGR format):
+    - SpeakerA: Yellow (&H0000FFFF)
+    - SpeakerB: Cyan (&H00FF00FF)
+    - SpeakerC: Magenta (&H00FFFF00)
+    - SpeakerD: Green (&H0000FF00)
+    - SpeakerE: Orange (&H000080FF)
+
+    Args:
+        result: Transcription result dict with 'sentence_info' or 'sentences' key
+                containing list of segment dicts
+
+    Returns:
+        str: ASS formatted subtitle content
+
+    Example:
+        >>> result = {
+        ...     "sentence_info": [
+        ...         {"sentence": "Hello world", "start": 0, "end": 1500, "spk": 0}
+        ...     ]
+        ... }
+        >>> output = format_ass(result)
+        >>> '[Script Info]' in output
+        True
+        >>> 'SpeakerA' in output
+        True
+    """
+    segments = result.get("sentence_info") or result.get("sentences", [])
+
+    if not segments:
+        return ASS_HEADER
+
+    # Detect overlaps (time-based fallback)
+    segments = detect_overlaps(segments)
+
+    lines = [ASS_HEADER]
+
+    for segment in segments:
+        start = format_ass_timestamp(segment["start"])
+        end = format_ass_timestamp(segment["end"])
+        text = segment.get("sentence", segment.get("text", ""))
+
+        # Use speaker-specific style
+        if "spk" in segment:
+            style = f"Speaker{chr(ord('A') + segment['spk'])}"
+        else:
+            style = "Default"
+
+        # Escape ASS special characters
+        text = text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
+
+        lines.append(f"Dialogue: 0,{start},{end},{style},,0,0,0,,{text}")
 
     return "\n".join(lines)
