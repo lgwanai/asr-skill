@@ -133,6 +133,7 @@ def format_json(result: dict[str, Any]) -> str:
     - confidence: Recognition confidence score (defaults to 1.0 if not present)
     - speaker_id: Speaker label (e.g., "Speaker A") if diarization enabled
     - is_overlap: Boolean flag for overlapping speech segments
+    - words: Array of word-level objects with text, start, end, confidence (if available)
 
     Args:
         result: Transcription result dict with 'sentence_info' or 'sentences' key
@@ -182,6 +183,20 @@ def format_json(result: dict[str, Any]) -> str:
 
         # Add overlap flag
         segment_data["is_overlap"] = seg.get("is_overlap", False)
+
+        # Add word-level timestamps if available
+        # FunASR timestamp format: [[word, start_ms, end_ms], ...]
+        if "timestamp" in seg and seg["timestamp"]:
+            segment_confidence = seg.get("confidence", 1.0)
+            words = []
+            for word_data in seg["timestamp"]:
+                words.append({
+                    "text": word_data[0],
+                    "start": word_data[1],
+                    "end": word_data[2],
+                    "confidence": segment_confidence,  # Use segment confidence
+                })
+            segment_data["words"] = words
 
         segments.append(segment_data)
 
