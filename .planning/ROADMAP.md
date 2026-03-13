@@ -69,7 +69,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — SRT, ASS, and Markdown formatters
-- [ ] 03-02-PLAN.md — Progress indication and word-level confidence
+- [x] 03-02-PLAN.md — Progress indication and word-level confidence
 - [ ] 03-03-PLAN.md — CLI and API integration for new formats
 
 ### Phase 4: Hotwords
@@ -102,11 +102,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Core ASR Pipeline | 4/4 | Complete | 01-01, 01-02, 01-03, 01-04 |
 | 2. Speaker Diarization | 4/4 | Complete | 02-01, 02-02, 02-03, 02-04 |
-| 3. Enhanced Outputs | 1/3 | In Progress | 03-01 |
+| 3. Enhanced Outputs | 2/3 | In Progress | 03-01, 03-02 |
 | 4. Hotwords | 0/TBD | Not started | - |
 | 5. Integration | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-03-13*
 *Depth: standard*
-*Last updated: 2026-03-14 after 03-01 completion*
+*Last updated: 2026-03-14 after 03-02 completion*

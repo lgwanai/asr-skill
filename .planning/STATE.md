@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 3 of 5 (Enhanced Outputs)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-14 — Completed 03-01: Output formatters (SRT, ASS, Markdown)
+Last activity: 2026-03-14 — Completed 03-02: Progress indication and word-level output
 
 Progress: [=====-----] 44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 2.0 min
-- Total execution time: 0.3 hours
+- Total plans completed: 10
+- Average duration: 2.1 min
+- Total execution time: 0.35 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [=====-----] 44%
 |-------|-------|-------|----------|
 | 01-core-asr-pipeline | 4 | 4 | 2.0 min |
 | 02-speaker-diarization | 4 | 4 | 2.0 min |
-| 03-enhanced-outputs | 1 | 3 | 3.0 min |
+| 03-enhanced-outputs | 2 | 3 | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 2.0 min, 2.0 min, 2.0 min, 4.0 min, 3.0 min
+- Last 5 plans: 2.0 min, 2.0 min, 3.0 min, 4.0 min, 3.0 min
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -66,6 +66,9 @@ Recent decisions affecting current work:
 20. ASS timestamp uses centiseconds (H:MM:SS.cc) with non-zero-padded hours
 21. ASS speaker colors: Yellow, Cyan, Magenta, Green, Orange for high contrast
 22. Markdown groups segments by speaker, ordered by first appearance
+23. Progress callback passed to FunASR generate() as 'callback' parameter
+24. Segment confidence used for word-level confidence (FunASR limitation)
+25. Callable type from typing module for Python 3.10+ compatibility
 
 ### Pending Todos
 
@@ -78,8 +81,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 03-01-PLAN.md (Output formatters)
-Resume file: .planning/phases/03-enhanced-outputs/03-02-PLAN.md
+Stopped at: Completed 03-02-PLAN.md (Progress indication and word-level output)
+Resume file: .planning/phases/03-enhanced-outputs/03-03-PLAN.md
 Next phase: 03-enhanced-outputs (continue execution)
 
 ---

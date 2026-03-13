@@ -20,14 +20,14 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **AUDIO-02**: User can input video files in MP4, AVI, MKV formats with automatic audio extraction
 - [x] **AUDIO-03**: System automatically resamples audio to 16kHz for optimal recognition
 - [x] **AUDIO-04**: System handles long audio (>1 hour) with VAD-based intelligent segmentation
-- [ ] **AUDIO-05**: System provides progress indication during processing
+- [x] **AUDIO-05**: System provides progress indication during processing
 
 ### Transcription
 
 - [x] **TRAN-01**: User receives text transcription of audio content
 - [x] **TRAN-02**: User receives word-level timestamps for each transcribed segment
 - [x] **TRAN-03**: System adds punctuation using CT-Transformer model
-- [ ] **TRAN-04**: System provides per-word confidence scores in output
+- [x] **TRAN-04**: System provides per-word confidence scores in output
 
 ### Speaker Diarization
 
@@ -104,11 +104,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIO-02 | Phase 2 | Complete |
 | AUDIO-03 | Phase 1 | Complete |
 | AUDIO-04 | Phase 1 | Complete |
-| AUDIO-05 | Phase 3 | Pending |
+| AUDIO-05 | Phase 3 | Complete |
 | TRAN-01 | Phase 1 | Complete |
 | TRAN-02 | Phase 1 | Complete |
 | TRAN-03 | Phase 1 | Complete |
-| TRAN-04 | Phase 3 | Pending |
+| TRAN-04 | Phase 3 | Complete |
 | SPKR-01 | Phase 2 | Complete |
 | SPKR-02 | Phase 2 | Complete |
 | SPKR-03 | Phase 2 | Complete |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-14 after 03-01 completion*
+*Last updated: 2026-03-14 after 03-02 completion*
