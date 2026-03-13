@@ -15,6 +15,9 @@ Supported Formats:
 Output Formats:
     - txt: Plain text with inline timestamps and speaker labels
     - json: Structured JSON with segment-level metadata including speaker IDs
+    - srt: SRT subtitle format with speaker labels
+    - ass: ASS subtitle format with speaker-specific styling
+    - md: Markdown document with speaker sections
 
 Features:
     - Automatic hardware detection (CUDA GPU, Apple MPS, CPU fallback)
@@ -31,7 +34,9 @@ from typing import Callable
 from asr_skill.core.device import get_device_with_fallback
 from asr_skill.core.models import create_pipeline
 from asr_skill.core.pipeline import transcribe as _transcribe
-from asr_skill.postprocessing.formatters import format_json, format_txt
+from asr_skill.postprocessing.formatters import (
+    format_json, format_txt, format_srt, format_ass, format_markdown
+)
 from asr_skill.preprocessing.audio import SUPPORTED_FORMATS, preprocess_input
 from asr_skill.preprocessing.video import SUPPORTED_VIDEO_FORMATS
 from asr_skill.utils.paths import get_output_path
@@ -60,7 +65,7 @@ def transcribe(
                     Video: MP4, AVI, MKV
         output_dir: Output directory for transcription file.
                     Default: same directory as input file.
-        format: Output format - "txt" or "json". Default: "txt".
+        format: Output format - "txt", "json", "srt", "ass", or "md". Default: "txt".
         diarize: Enable speaker diarization. Default: True.
                  When enabled, output includes speaker labels (Speaker A, B, C...).
         progress_callback: Optional callback for progress updates.
@@ -106,10 +111,16 @@ def transcribe(
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Format and write output
-    if format == "txt":
-        output_text = format_txt(result)
-    else:
-        output_text = format_json(result)
+    format_map = {
+        "txt": format_txt,
+        "json": format_json,
+        "srt": format_srt,
+        "ass": format_ass,
+        "md": format_markdown,
+    }
+
+    formatter = format_map.get(format, format_txt)
+    output_text = formatter(result)
 
     output_file.write_text(output_text, encoding="utf-8")
 
