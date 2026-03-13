@@ -11,7 +11,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **CORE-01**: System auto-detects available hardware (CUDA GPU, Apple MPS, CPU) and selects optimal device
 - [ ] **CORE-02**: System validates Python version (≥3.10) and dependencies before execution
-- [ ] **CORE-03**: System auto-downloads and caches FunASR models to local `models/` directory
+- [x] **CORE-03**: System auto-downloads and caches FunASR models to local `models/` directory
 - [x] **CORE-04**: System handles GPU-to-CPU fallback gracefully with user notification
 
 ### Audio Input
@@ -24,9 +24,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Transcription
 
-- [ ] **TRAN-01**: User receives text transcription of audio content
-- [ ] **TRAN-02**: User receives word-level timestamps for each transcribed segment
-- [ ] **TRAN-03**: System adds punctuation using CT-Transformer model
+- [x] **TRAN-01**: User receives text transcription of audio content
+- [x] **TRAN-02**: User receives word-level timestamps for each transcribed segment
+- [x] **TRAN-03**: System adds punctuation using CT-Transformer model
 - [ ] **TRAN-04**: System provides per-word confidence scores in output
 
 ### Speaker Diarization
@@ -98,16 +98,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | CORE-01 | Phase 1 | Complete |
 | CORE-02 | Phase 1 | Pending |
-| CORE-03 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
 | AUDIO-01 | Phase 1 | Complete |
 | AUDIO-02 | Phase 2 | Pending |
 | AUDIO-03 | Phase 1 | Complete |
 | AUDIO-04 | Phase 1 | Complete |
 | AUDIO-05 | Phase 3 | Pending |
-| TRAN-01 | Phase 1 | Pending |
-| TRAN-02 | Phase 1 | Pending |
-| TRAN-03 | Phase 1 | Pending |
+| TRAN-01 | Phase 1 | Complete |
+| TRAN-02 | Phase 1 | Complete |
+| TRAN-03 | Phase 1 | Complete |
 | TRAN-04 | Phase 3 | Pending |
 | SPKR-01 | Phase 2 | Pending |
 | SPKR-02 | Phase 2 | Pending |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after roadmap creation*
+*Last updated: 2026-03-14 after Phase 1 plan 03 completion*
