@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "asr-skill"
+version = "0.1.0"
+description = "Local speech recognition with high-accuracy Chinese transcription"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "ASR Skill Team" }
+]
+dependencies = [
+    "funasr==1.3.1",
+    "torch>=2.0.0",
+    "modelscope>=1.34.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0",
+]
+
+[project.scripts]
+asr-skill = "asr_skill.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["asr_skill"]
