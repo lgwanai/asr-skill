@@ -31,9 +31,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Speaker Diarization
 
-- [ ] **SPKR-01**: System identifies and labels different speakers (Speaker A, B, C...)
-- [ ] **SPKR-02**: User receives speaker timestamps (start/end times per speaker)
-- [ ] **SPKR-03**: System marks overlapping speech segments in output
+- [x] **SPKR-01**: System identifies and labels different speakers (Speaker A, B, C...)
+- [x] **SPKR-02**: User receives speaker timestamps (start/end times per speaker)
+- [x] **SPKR-03**: System marks overlapping speech segments in output
 
 ### Output Formats
 
@@ -109,9 +109,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TRAN-02 | Phase 1 | Complete |
 | TRAN-03 | Phase 1 | Complete |
 | TRAN-04 | Phase 3 | Pending |
-| SPKR-01 | Phase 2 | Pending |
-| SPKR-02 | Phase 2 | Pending |
-| SPKR-03 | Phase 2 | Pending |
+| SPKR-01 | Phase 2 | Complete |
+| SPKR-02 | Phase 2 | Complete |
+| SPKR-03 | Phase 2 | Complete |
 | OUTP-01 | Phase 1 | Complete |
 | OUTP-02 | Phase 3 | Pending |
 | OUTP-03 | Phase 3 | Pending |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-14 after Phase 1 plan 03 completion*
+*Last updated: 2026-03-14 after Phase 2 plan 02 completion*

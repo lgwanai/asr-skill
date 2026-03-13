@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 2 of 5 (Speaker Diarization)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In Progress
-Last activity: 2026-03-14 — Completed plan 01: Video input support
+Last activity: 2026-03-14 — Completed plan 02: Speaker diarization pipeline
 
-Progress: [===--------] 25%
+Progress: [=====------] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 2.0 min
-- Total execution time: 0.17 hours
+- Total execution time: 0.20 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-core-asr-pipeline | 4 | 4 | 2.0 min |
-| 02-speaker-diarization | 1 | 2 | 2.0 min |
+| 02-speaker-diarization | 2 | 2 | 2.0 min |
 
 **Recent Trend:**
 - Last 5 plans: 2.0 min, 2.0 min, 2.0 min, 2.0 min, 2.0 min
@@ -56,6 +56,9 @@ Recent decisions affecting current work:
 11. FFmpeg CLI via subprocess for video audio extraction
 12. Context manager pattern for guaranteed temp file cleanup
 13. imageio-ffmpeg fallback for automatic FFmpeg installation
+14. Speaker diarization enabled by default (diarize=True)
+15. spk_mode="punc_segment" for optimal speaker segmentation
+16. Time-based overlap detection with 50% threshold as fallback
 
 ### Pending Todos
 
@@ -68,8 +71,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 02-01-PLAN.md (Video input support)
-Resume file: .planning/phases/02-speaker-diarization/02-01-SUMMARY.md
+Stopped at: Completed 02-02-PLAN.md (Speaker diarization pipeline)
+Resume file: .planning/phases/02-speaker-diarization/02-02-SUMMARY.md
 
 ---
 *State initialized: 2026-03-13*
