@@ -29,7 +29,15 @@ Required for audio/video processing:
 
 This skill is designed to be used by AI agents (Trae, Cursor, Claude) to perform transcription tasks on your behalf.
 
-### 📦 Package for Distribution
+### � Quick Install via Chat
+
+If you are using **Cursor**, **Claude Code**, or **OpenClaw**, you can simply paste the following into the chat to install the skill:
+
+```
+https://github.com/lgwanai/asr-skill help me install asr skill
+```
+
+### � Package for Distribution
 
 You can create a versioned zip package of the skill:
 
@@ -103,3 +111,12 @@ print(f"Speakers: {result.get('speakers', [])}")
 - Chinese-optimized recognition with punctuation
 - Speaker diarization (multi-speaker identification)
 - Video file support with automatic audio extraction
+
+## Model Storage
+
+The large models (~2-3GB) required for ASR and speaker diarization are automatically downloaded on first use.
+
+**Default Location**: `./models` (relative to your current working directory)
+
+You can customize this by setting the `model_dir` parameter in the Python API, but the CLI/Skill currently uses the default project-local directory.
+
