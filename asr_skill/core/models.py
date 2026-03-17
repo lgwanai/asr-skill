@@ -27,9 +27,45 @@ Model IDs (from FunASR Model Zoo):
 """
 
 from funasr import AutoModel
+import os
+import platform
+from pathlib import Path
 
-# Project-local model cache directory
-MODEL_DIR = "./models"
+def get_default_model_dir() -> str:
+    """Get the default model directory based on the operating system."""
+    home = Path.home()
+    system = platform.system()
+    
+    if system == "Windows":
+        # Windows: %APPDATA%/asr-skill/models
+        base = os.environ.get("APPDATA")
+        if base:
+            path = Path(base) / "asr-skill" / "models"
+        else:
+            path = home / "AppData" / "Roaming" / "asr-skill" / "models"
+    elif system == "Darwin":
+        # macOS: ~/Library/Application Support/asr-skill/models
+        path = home / "Library" / "Application Support" / "asr-skill" / "models"
+    else:
+        # Linux/Other: ~/.local/share/asr-skill/models
+        xdg_data_home = os.environ.get("XDG_DATA_HOME")
+        if xdg_data_home:
+            path = Path(xdg_data_home) / "asr-skill" / "models"
+        else:
+            path = home / ".local" / "share" / "asr-skill" / "models"
+            
+    # Ensure directory exists
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        # Fallback to local ./models if permission denied
+        path = Path("./models")
+        path.mkdir(parents=True, exist_ok=True)
+        
+    return str(path)
+
+# Default persistent model cache directory
+MODEL_DIR = get_default_model_dir()
 
 
 def create_pipeline(device: str, model_dir: str = MODEL_DIR, diarize: bool = True) -> AutoModel:

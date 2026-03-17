@@ -11,6 +11,8 @@ RELEASE_NOTE.md
 .claude-plugin/
 .planning/
 .ruff_cache/
+testcase/
+.asr_skill/
 
 # Python cache
 __pycache__/

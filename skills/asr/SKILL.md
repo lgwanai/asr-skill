@@ -51,6 +51,23 @@ print(f"Output: {result['output_path']}")
 print(f"Speakers: {result.get('speakers', [])}")
 ```
 
+### Asynchronous Execution (Recommended for Long Files)
+
+Avoid timeouts by running transcription in the background:
+
+```bash
+# Start async task
+python3 skills/asr/scripts/transcribe.py long_video.mp4 --async
+# Output: {"task_id": "a1b2c3d4", "status": "queued", ...}
+
+# Check status
+python3 skills/asr/scripts/transcribe.py --status a1b2c3d4
+# Output: {"task_id": "a1b2c3d4", "status": "processing", "progress": 45, ...}
+
+# List recent tasks
+python3 skills/asr/scripts/transcribe.py --list
+```
+
 ## Core Features
 
 ### Speaker Diarization
