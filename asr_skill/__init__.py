@@ -40,16 +40,17 @@ from asr_skill.postprocessing.formatters import (
 from asr_skill.preprocessing.audio import SUPPORTED_FORMATS, preprocess_input
 from asr_skill.preprocessing.video import SUPPORTED_VIDEO_FORMATS
 from asr_skill.utils.paths import get_output_path
+from asr_skill.utils.config import load_config
 
 __version__ = "0.1.0"
 
-__all__ = ["transcribe", "SUPPORTED_FORMATS", "SUPPORTED_VIDEO_FORMATS"]
+__all__ = ["transcribe", "SUPPORTED_FORMATS", "SUPPORTED_VIDEO_FORMATS", "load_config"]
 
 
 def transcribe(
     input_file: str,
     output_dir: str | None = None,
-    format: str = "txt",
+    format: str | None = None,
     diarize: bool = True,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> dict[str, str | list]:
@@ -64,8 +65,9 @@ def transcribe(
                     Audio: MP3, WAV, M4A, FLAC
                     Video: MP4, AVI, MKV
         output_dir: Output directory for transcription file.
-                    Default: same directory as input file.
-        format: Output format - "txt", "json", "srt", "ass", or "md". Default: "txt".
+                    Default: from config.json or same directory as input file.
+        format: Output format - "txt", "json", "srt", "ass", or "md".
+                Default: from config.json or "txt".
         diarize: Enable speaker diarization. Default: True.
                  When enabled, output includes speaker labels (Speaker A, B, C...).
         progress_callback: Optional callback for progress updates.
@@ -92,6 +94,10 @@ def transcribe(
         >>> # Disable speaker diarization
         >>> result = transcribe("audio.mp3", diarize=False)
     """
+    config = load_config()
+    format = format or config.get("output_format", "txt")
+    output_dir = output_dir or config.get("output_dir") or None
+    
     # Detect device with fallback warning
     device, fallback = get_device_with_fallback()
 

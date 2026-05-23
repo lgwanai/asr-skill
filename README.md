@@ -82,6 +82,32 @@ pip install -e .
 
 ---
 
+## ⚙️ 配置文件 (Configuration)
+
+可选配置文件 `config.json`，不提供则使用默认值：
+
+```json
+{
+  "model_dir": "",
+  "output_format": "txt",
+  "output_dir": ""
+}
+```
+
+| 配置项 | 说明 |
+|--------|------|
+| `model_dir` | 模型存储目录，空则使用系统默认路径 |
+| `output_format` | 默认输出格式：txt/json/srt/ass/md |
+| `output_dir` | 默认输出目录，空则与输入文件同目录 |
+
+环境变量：
+```bash
+export ASR_FORCE_CPU=1        # 强制使用 CPU
+export ASR_MODEL_DIR=/path   # 自定义模型路径
+```
+
+---
+
 ## 🛠 使用指南 (Usage)
 
 ### 命令行工具 (CLI)

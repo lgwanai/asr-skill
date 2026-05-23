@@ -20,3 +20,6 @@ __pycache__/
 
 # Build artifacts
 dist/
+
+# Config (keep example, ignore actual)
+config.json
