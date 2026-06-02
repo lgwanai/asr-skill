@@ -30,5 +30,8 @@ config.txt
 demo/
 output/
 
+# Model cache backup
+windowsModels/
+
 # macOS
 .DS_Store
