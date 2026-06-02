@@ -325,7 +325,7 @@ def _transcribe_via_api(
         print()
         print("=" * 56)
         print("  ⚠️  API 返回的结果不包含人声分离信息")
-        print(f"  API: {api_url}")
+        print(f"  API: {api_cfg.get('url') or 'https://api.xiaomimimo.com/v1'}")
         print(f"  所有语音将标记为 \"{UNIDENTIFIED_SPEAKER}\"")
         print(f"  如需人声分离，请确认 API 是否支持该功能")
         print("=" * 56)
