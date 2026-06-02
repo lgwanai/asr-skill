@@ -21,6 +21,7 @@ SENSITIVE_PATTERNS = [
 SENSITIVE_FILES = [
     '.env', '.env.local', '.env.production', '.env.development',
     'secrets.json', 'credentials.json', 'config.secrets.json',
+    'config.txt',  # Exclude actual config (may contain API keys)
     'private.key', 'id_rsa', 'id_ed25519',
 ]
 
@@ -67,7 +68,7 @@ def package_skill():
         "__pycache__", "*.pyc", ".DS_Store", ".git", ".gitignore",
         ".idea", ".vscode", ".env", ".env.local", ".env.production",
         ".env.development", "secrets.json", "credentials.json",
-        "config.secrets.json", "private.key", "*.pem"
+        "config.secrets.json", "config.txt", "private.key", "*.pem"
     }
 
     print(f"🔍 Checking for potential secret leaks...")
@@ -88,7 +89,10 @@ def package_skill():
                 all_warnings.append(f"\n📄 {rel_path}:")
                 all_warnings.extend(warnings)
             
-            files_to_package.append((file_path, os.path.relpath(file_path, os.path.dirname(source_dir))))
+            # ZIP format requires forward slashes; os.path.relpath returns
+            # backslashes on Windows, so normalize with os.sep replacement
+            zip_arcname = os.path.relpath(file_path, os.path.dirname(source_dir)).replace(os.sep, "/")
+            files_to_package.append((file_path, zip_arcname))
     
     if all_warnings:
         print("\n" + "="*60)

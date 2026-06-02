@@ -121,8 +121,9 @@ def extract_audio_from_video(video_path: str):
     # Get FFmpeg path
     ffmpeg_path = get_ffmpeg_path()
 
-    # Create temp file for audio output
-    temp_audio = tempfile.mktemp(suffix=".wav")
+    # Create temp file for audio output (mkstemp avoids TOCTOU race condition of mktemp)
+    fd, temp_audio = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)  # Close fd immediately; FFmpeg writes to the path
 
     try:
         # FFmpeg command: extract audio, convert to 16kHz mono WAV
@@ -157,6 +158,10 @@ def extract_audio_from_video(video_path: str):
         yield temp_audio
 
     finally:
-        # Guaranteed cleanup of temp file
-        if os.path.exists(temp_audio):
-            os.remove(temp_audio)
+        # Guaranteed cleanup of temp file (uses Path.unlink for Windows compatibility)
+        try:
+            Path(temp_audio).unlink(missing_ok=True)
+        except PermissionError:
+            # Windows may still hold a file lock; retry is not needed here
+            # since the context manager handles lifecycle deterministically
+            pass

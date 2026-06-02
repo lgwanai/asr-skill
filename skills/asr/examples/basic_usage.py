@@ -59,6 +59,35 @@ def example_no_diarization():
     print(f"Text (no speakers): {result['text']}")
 
 
+def example_sensevoice_fast_cpu():
+    """Use SenseVoice for fast CPU transcription."""
+    result = transcribe("lecture.mp3", model_type="sensevoice", format="txt")
+    print(f"Model used: {result['model_used']}")
+    print(f"Device: {result['device']}")
+    print(f"Text: {result['text']}")
+
+
+def example_paraformer_gpu_accurate():
+    """Use Paraformer for best accuracy with speaker diarization."""
+    result = transcribe(
+        "meeting.wav",
+        model_type="paraformer",
+        diarize=True,
+        format="json"
+    )
+    print(f"Model used: {result['model_used']}")
+    print(f"Speakers: {result.get('speakers', [])}")
+    print(f"Output: {result['output_path']}")
+
+
+def example_auto_model_selection():
+    """Auto-detect best model based on hardware."""
+    result = transcribe("audio.mp3", model_type="auto")
+    # or simply: result = transcribe("audio.mp3")  # defaults to "auto" from config
+    print(f"Auto-selected model: {result['model_used']}")
+    print(f"Device used: {result['device']}")
+
+
 if __name__ == "__main__":
     print("ASR Skill - Python API Examples")
     print(f"Supported audio: {SUPPORTED_FORMATS}")

@@ -1,8 +1,13 @@
 #!/bin/bash
 # CLI usage examples for the ASR skill
 
-# Basic transcription (outputs TXT by default)
+# Basic transcription (auto-detects best model for your hardware)
 asr-skill audio.mp3
+
+# Model selection
+asr-skill audio.mp3 -m sensevoice   # Use SenseVoice (faster on CPU)
+asr-skill audio.mp3 -m paraformer   # Use Paraformer (best accuracy, needs GPU)
+asr-skill audio.mp3 -m auto         # Auto-select (default behavior)
 
 # Transcribe with JSON output
 asr-skill audio.mp3 -f json

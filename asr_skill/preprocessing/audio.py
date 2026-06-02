@@ -15,6 +15,7 @@ Preprocessing Pipeline:
 5. Write to temporary WAV file for model inference
 """
 
+import os
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
@@ -66,7 +67,11 @@ def preprocess_input(input_path: str) -> Generator[str, None, None]:
                 yield audio_path
             finally:
                 # Cleanup preprocessed temp file
-                Path(audio_path).unlink(missing_ok=True)
+                # try/except handles Windows file lock contention
+                try:
+                    Path(audio_path).unlink(missing_ok=True)
+                except PermissionError:
+                    pass
     else:
         # Handle audio files
         audio_path = _preprocess_audio_file(input_path)
@@ -74,7 +79,10 @@ def preprocess_input(input_path: str) -> Generator[str, None, None]:
             yield audio_path
         finally:
             # Cleanup preprocessed temp file
-            Path(audio_path).unlink(missing_ok=True)
+            try:
+                Path(audio_path).unlink(missing_ok=True)
+            except PermissionError:
+                pass
 
 
 def preprocess_audio(input_path: str) -> str:
@@ -138,8 +146,9 @@ def _preprocess_audio_file(input_path: str) -> str:
     if sr != 16000:
         y = librosa.resample(y, orig_sr=sr, target_sr=16000)
 
-    # Write to temporary WAV file
-    temp_path = tempfile.mktemp(suffix=".wav")
+    # Write to temporary WAV file (mkstemp avoids TOCTOU race condition of mktemp)
+    fd, temp_path = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)  # Close fd immediately; sf.write re-opens the path
     sf.write(temp_path, y, 16000)
 
     return temp_path

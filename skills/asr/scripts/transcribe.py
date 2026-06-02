@@ -58,15 +58,20 @@ class TaskManager:
         with open(TASKS_FILE, 'w') as f:
             json.dump(tasks, f, indent=2)
 
-    def create_task(self, input_file, output_format, output_dir=None):
+    def create_task(self, input_file, output_format, output_dir=None,
+                    model_type=None, mode=None, api_url=None, api_key=None):
         task_id = uuid.uuid4().hex[:8]
         tasks = self._load_tasks()
-        
+
         tasks[task_id] = {
             "task_id": task_id,
             "input_file": str(input_file),
             "output_format": output_format,
             "output_dir": str(output_dir) if output_dir else None,
+            "model_type": model_type,
+            "mode": mode,
+            "api_url": api_url,
+            "api_key": api_key,
             "status": "pending",
             "progress": 0,
             "created_at": time.time(),
@@ -162,12 +167,20 @@ def run_worker(task_id):
                 percent = int(current / total * 100)
                 tm.update_task(task_id, progress=percent, message=f"Processing {percent}%")
 
+        # Apply API overrides from task
+        if task.get("api_url"):
+            os.environ["MIMO_API_URL"] = task["api_url"]
+        if task.get("api_key"):
+            os.environ["MIMO_API_KEY"] = task["api_key"]
+
         # Run transcription
         tm.update_task(task_id, message="Transcribing...")
         result = transcribe(
-            input_path, 
-            output_dir=output_dir, 
+            input_path,
+            output_dir=output_dir,
             format=output_format,
+            model_type=task.get("model_type"),
+            mode=task.get("mode"),
             progress_callback=progress_callback
         )
 
@@ -210,6 +223,28 @@ def main():
         help="Directory to save output (default: same as input file)"
     )
     parser.add_argument(
+        "-m", "--model",
+        choices=["auto", "paraformer", "sensevoice"],
+        default=None,
+        help="ASR engine: auto (detect from hardware), paraformer (best accuracy), sensevoice (faster on CPU)"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["local", "api"],
+        default=None,
+        help="Operation mode: local (default) or api (cloud API)"
+    )
+    parser.add_argument(
+        "--api-url",
+        default=None,
+        help="API endpoint URL (overrides config)"
+    )
+    parser.add_argument(
+        "--api-key",
+        default=None,
+        help="API authentication key (overrides config/MIMO_API_KEY env var)"
+    )
+    parser.add_argument(
         "--async", dest="async_mode", action="store_true",
         help="Run in background and return task ID immediately"
     )
@@ -249,17 +284,22 @@ def main():
         sys.exit(1)
 
     # Create task
-    task_id = tm.create_task(args.input_file, args.format, args.output_dir)
+    task_id = tm.create_task(
+        args.input_file, args.format, args.output_dir,
+        model_type=args.model,
+        mode=args.mode,
+        api_url=args.api_url,
+        api_key=args.api_key,
+    )
 
     # Async Execution
     if args.async_mode:
         # Estimate duration
         duration = get_duration(input_path)
-        # Determine device (quick check or assume MPS/CPU based on platform)
-        import platform
-        is_mac_arm = platform.system() == "Darwin" and platform.machine() == "arm64"
-        device_type = "mps" if is_mac_arm else "cpu" # Simplification for estimation
-        
+        # Use actual device detection for accurate time estimation
+        from asr_skill.core.device import get_device
+        device_type = get_device()
+
         est_time = estimate_processing_time(duration, device_type)
         tm.update_task(task_id, estimated_duration=est_time, message="Queued")
 
@@ -271,13 +311,19 @@ def main():
             "--worker-task-id", task_id
         ]
         
-        # Detach process
-        subprocess.Popen(
-            cmd,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True
-        )
+        # Detach process (platform-specific detachment)
+        popen_kwargs = {
+            "stdout": subprocess.DEVNULL,
+            "stderr": subprocess.DEVNULL,
+        }
+        if sys.platform == "win32":
+            # Windows: CREATE_NEW_PROCESS_GROUP prevents child from receiving
+            # Ctrl+C and allows it to survive parent process termination
+            popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+        else:
+            # Unix: start_new_session via setsid() detaches from terminal
+            popen_kwargs["start_new_session"] = True
+        subprocess.Popen(cmd, **popen_kwargs)
 
         response = {
             "task_id": task_id,

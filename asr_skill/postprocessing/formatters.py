@@ -17,7 +17,12 @@ Output Format Decisions (from CONTEXT.md):
 import json
 from typing import Any
 
-from asr_skill.postprocessing.speakers import detect_overlaps, format_speaker_label
+from asr_skill.postprocessing.speakers import (
+    UNIDENTIFIED_SPEAKER,
+    detect_overlaps,
+    format_speaker_label,
+    has_diarization_data,
+)
 
 
 # ASS subtitle format header with speaker-specific styles
@@ -68,7 +73,10 @@ def format_timestamp(ms: int) -> str:
 def format_txt(result: dict[str, Any]) -> str:
     """Format transcription result as plain text with timestamps and speaker labels.
 
-    Each segment is formatted as: [HH:MM:SS.mmm] Speaker A: transcribed text
+    Consecutive segments from the same speaker are merged into a single line
+    for natural readability. Only a speaker change or overlap triggers a new line.
+
+    Each line is formatted as: [HH:MM:SS.mmm] Speaker A: transcribed text
     Overlapping segments are prefixed with [OVERLAP].
 
     Args:
@@ -77,18 +85,19 @@ def format_txt(result: dict[str, Any]) -> str:
                 optionally 'spk' fields
 
     Returns:
-        str: Formatted text with timestamps and speaker labels, one segment per line
+        str: Formatted text with timestamps and speaker labels, merged by speaker
 
     Example:
         >>> result = {
         ...     "sentence_info": [
         ...         {"sentence": "Hello world", "start": 0, "end": 1500, "spk": 0},
-        ...         {"sentence": "Goodbye", "start": 2000, "end": 3000, "spk": 1}
+        ...         {"sentence": "How are you", "start": 2000, "end": 3000, "spk": 0},
+        ...         {"sentence": "Goodbye", "start": 4000, "end": 5000, "spk": 1}
         ...     ]
         ... }
         >>> print(format_txt(result))
-        [00:00:00.000] Speaker A: Hello world
-        [00:00:02.000] Speaker B: Goodbye
+        [00:00:00.000] Speaker A: Hello world How are you
+        [00:00:04.000] Speaker B: Goodbye
     """
     # Use sentence_info for speaker data, fall back to sentences
     segments = result.get("sentence_info") or result.get("sentences", [])
@@ -99,26 +108,53 @@ def format_txt(result: dict[str, Any]) -> str:
     # Detect overlaps (time-based fallback)
     segments = detect_overlaps(segments)
 
+    # Check if any speaker data is available
+    diarization_available = has_diarization_data(segments)
+
     lines = []
+    current_speaker = None
+    current_start = None
+    current_texts: list[str] = []
+
+    def _flush() -> None:
+        """Write the accumulated merged segment as one line."""
+        if current_texts and current_start is not None and current_speaker is not None:
+            timestamp = format_timestamp(current_start)
+            speaker = format_speaker_label(current_speaker) if diarization_available else UNIDENTIFIED_SPEAKER
+            merged_text = "".join(current_texts)
+            lines.append(f"[{timestamp}] {speaker}: {merged_text}")
+
     for segment in segments:
-        timestamp = format_timestamp(segment["start"])
+        # Get speaker id (default to -1 for no diarization)
+        spk = segment.get("spk", -1)
+        text = segment.get("sentence", segment.get("text", ""))
+        is_overlap = segment.get("is_overlap", False)
 
-        # Speaker label (if available)
-        if "spk" in segment:
-            speaker = format_speaker_label(segment["spk"])
-            text = segment.get("sentence", segment.get("text", ""))
+        # Determine if we should start a new line:
+        # - Overlap: always separate
+        # - Speaker change: new line
+        # - First segment: new line
+        if is_overlap or (current_speaker is not None and spk != current_speaker):
+            _flush()
+            current_texts = []
+
+        if not current_texts:
+            current_speaker = spk
+            current_start = segment["start"]
+
+        # Overlap segments always get their own line
+        if is_overlap:
+            timestamp = format_timestamp(segment["start"])
+            speaker = format_speaker_label(spk) if diarization_available else UNIDENTIFIED_SPEAKER
+            lines.append(f"[{timestamp}] [OVERLAP] {speaker}: {text}")
+            current_texts = []
+            current_speaker = None
+            current_start = None
         else:
-            speaker = None
-            text = segment.get("text", "")
+            current_texts.append(text)
 
-        # Overlap tag
-        overlap_tag = "[OVERLAP] " if segment.get("is_overlap") else ""
-
-        # Format line
-        if speaker:
-            lines.append(f"[{timestamp}] {overlap_tag}{speaker}: {text}")
-        else:
-            lines.append(f"[{timestamp}] {text}")
+    # Flush remaining
+    _flush()
 
     return "\n".join(lines)
 
@@ -177,9 +213,11 @@ def format_json(result: dict[str, Any]) -> str:
             "confidence": seg.get("confidence", 1.0),
         }
 
-        # Add speaker info if available
+        # Always include speaker_id — "未识别人声" when no diarization
         if "spk" in seg:
             segment_data["speaker_id"] = format_speaker_label(seg["spk"])
+        else:
+            segment_data["speaker_id"] = UNIDENTIFIED_SPEAKER
 
         # Add overlap flag
         segment_data["is_overlap"] = seg.get("is_overlap", False)
@@ -277,10 +315,12 @@ def format_srt(result: dict[str, Any]) -> str:
         end = format_srt_timestamp(segment["end"])
         text = segment.get("sentence", segment.get("text", ""))
 
-        # Add speaker prefix if available
+        # Add speaker prefix — "未识别人声" when no diarization
         if "spk" in segment:
             speaker = format_speaker_label(segment["spk"])
-            text = f"[{speaker}] {text}"
+        else:
+            speaker = UNIDENTIFIED_SPEAKER
+        text = f"[{speaker}] {text}"
 
         lines.append(str(i))
         lines.append(f"{start} --> {end}")
@@ -367,11 +407,11 @@ def format_ass(result: dict[str, Any]) -> str:
         end = format_ass_timestamp(segment["end"])
         text = segment.get("sentence", segment.get("text", ""))
 
-        # Use speaker-specific style
+        # Use speaker-specific style; "Default" when no diarization
         if "spk" in segment:
             style = f"Speaker{chr(ord('A') + segment['spk'])}"
         else:
-            style = "Default"
+            style = "Default"  # No diarization → default style
 
         # Escape ASS special characters
         text = text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
@@ -431,8 +471,8 @@ def format_markdown(result: dict[str, Any]) -> str:
 
     for seg in segments:
         spk = seg.get("spk", -1)
-        speaker_label = format_speaker_label(spk) if spk != -1 else "Unknown Speaker"
-        
+        speaker_label = format_speaker_label(spk)
+
         timestamp = format_timestamp(seg["start"])
         text = seg.get("sentence", seg.get("text", ""))
         overlap = " [OVERLAP]" if seg.get("is_overlap") else ""

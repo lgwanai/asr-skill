@@ -23,3 +23,11 @@ dist/
 
 # Config (keep example, ignore actual)
 config.json
+config.txt
+
+# Demo audio/video files
+demo/
+output/
+
+# macOS
+.DS_Store
