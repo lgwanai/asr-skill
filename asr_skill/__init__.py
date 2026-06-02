@@ -50,6 +50,7 @@ from asr_skill.core.models import (
     create_pipeline,
     get_model_info,
     get_platform_info,
+    resolve_model_cache_dir,
     resolve_model_type,
 )
 from asr_skill.core.pipeline import transcribe as _transcribe_local
@@ -185,6 +186,7 @@ def transcribe(
             format=format,
             diarize=diarize,
             model_type=model_type,
+            model_dir=config.get("model_dir") or None,
             progress_callback=progress_callback,
         )
 
@@ -197,6 +199,7 @@ def _transcribe_local_mode(
     format: str,
     diarize: bool,
     model_type: str,
+    model_dir: str | None = None,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> dict[str, str | list]:
     """Run transcription using local FunASR models."""
@@ -240,8 +243,8 @@ def _transcribe_local_mode(
         f"({model_info.get('size_approx', 'unknown size')})..."
     )
 
-    # Load model
-    model = create_pipeline(device, diarize=diarize, model_type=resolved_model)
+    # Load model (cache_dir resolution happens inside create_pipeline)
+    model = create_pipeline(device, diarize=diarize, model_type=resolved_model, cache_dir=model_dir)
 
     # Preprocess and transcribe
     with preprocess_input(input_file) as audio_path:
