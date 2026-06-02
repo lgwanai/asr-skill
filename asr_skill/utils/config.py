@@ -223,8 +223,7 @@ def load_config() -> dict:
     Search order (first found wins):
         1. ``ASR_CONFIG_PATH`` environment variable
         2. ``./config.txt`` (current working directory)
-        3. ``./skills/asr/config.txt``
-        4. Built-in :data:`DEFAULT_CONFIG`
+        3. Built-in :data:`DEFAULT_CONFIG`
 
     After merging, environment variables ``MIMO_API_KEY`` and ``MIMO_API_URL``
     override their respective config values (highest priority for secrets).
@@ -245,7 +244,6 @@ def load_config() -> dict:
     # Build search path list
     config_paths = [
         Path.cwd() / "config.txt",
-        Path.cwd() / "skills" / "asr" / "config.txt",
     ]
 
     if env_path := os.environ.get("ASR_CONFIG_PATH"):

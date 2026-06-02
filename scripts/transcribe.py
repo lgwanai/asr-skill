@@ -33,9 +33,8 @@ logger = logging.getLogger("ASR-Skill")
 # Constants
 # Determine project root relative to this script
 current_dir = Path(__file__).resolve().parent
-# Script is at skills/asr/scripts/transcribe.py
-# project_root is at ../../../
-PROJECT_ROOT = current_dir.parent.parent.parent
+# Script is at scripts/transcribe.py, project root is parent of scripts/
+PROJECT_ROOT = current_dir.parent
 TASKS_DIR = PROJECT_ROOT / ".asr_skill"
 TASKS_FILE = TASKS_DIR / "tasks.json"
 
@@ -150,7 +149,7 @@ def run_worker(task_id):
     try:
         # Import heavy dependencies here
         current_dir = Path(__file__).resolve().parent
-        project_root = current_dir.parent.parent.parent
+        project_root = current_dir.parent
         if str(project_root) not in sys.path:
             sys.path.insert(0, str(project_root))
 

@@ -49,13 +49,13 @@ def check_file_for_secrets(file_path):
 
 def package_skill():
     """
-    Packages the 'skills/asr' directory into a zip file with date-based versioning.
+    Packages the project root into a zip file with date-based versioning.
     The output zip is saved to the 'dist' directory.
     """
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    source_dir = os.path.join(project_root, "skills", "asr")
+    source_dir = project_root
     dist_dir = os.path.join(project_root, "dist")
-    
+
     today = datetime.datetime.now().strftime("%Y%m%d")
     zip_filename = f"asr-skill-{today}.zip"
     zip_filepath = os.path.join(dist_dir, zip_filename)

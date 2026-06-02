@@ -26,16 +26,16 @@ This skill triggers when the user:
 
 ```bash
 # Transcribe audio file (auto-detects best model for your hardware)
-python3 skills/asr/scripts/transcribe.py path/to/audio.mp3
+python3 scripts/transcribe.py path/to/audio.mp3
 
 # Transcribe video file
-python3 skills/asr/scripts/transcribe.py path/to/video.mp4
+python3 scripts/transcribe.py path/to/video.mp4
 
 # Force SenseVoice for faster CPU transcription
-python3 skills/asr/scripts/transcribe.py audio.mp3 -m sensevoice
+python3 scripts/transcribe.py audio.mp3 -m sensevoice
 
 # Force Paraformer for best accuracy with speaker diarization
-python3 skills/asr/scripts/transcribe.py meeting.mp3 -m paraformer
+python3 scripts/transcribe.py meeting.mp3 -m paraformer
 ```
 
 ### ASR Engine Selection
@@ -53,10 +53,10 @@ python3 skills/asr/scripts/transcribe.py meeting.mp3 -m paraformer
 ### Output Formats
 
 ```bash
-python3 skills/asr/scripts/transcribe.py audio.mp3 -f json   # Structured JSON with metadata
-python3 skills/asr/scripts/transcribe.py audio.mp3 -f srt    # SubRip subtitles
-python3 skills/asr/scripts/transcribe.py audio.mp3 -f ass    # ASS/SSA subtitles with speaker styling
-python3 skills/asr/scripts/transcribe.py audio.mp3 -f md     # Markdown with speaker sections
+python3 scripts/transcribe.py audio.mp3 -f json   # Structured JSON with metadata
+python3 scripts/transcribe.py audio.mp3 -f srt    # SubRip subtitles
+python3 scripts/transcribe.py audio.mp3 -f ass    # ASS/SSA subtitles with speaker styling
+python3 scripts/transcribe.py audio.mp3 -f md     # Markdown with speaker sections
 ```
 
 ### Python API
@@ -118,15 +118,15 @@ Avoid timeouts by running transcription in the background:
 
 ```bash
 # Start async task
-python3 skills/asr/scripts/transcribe.py long_video.mp4 --async
+python3 scripts/transcribe.py long_video.mp4 --async
 # Output: {"task_id": "a1b2c3d4", "status": "queued", ...}
 
 # Check status
-python3 skills/asr/scripts/transcribe.py --status a1b2c3d4
+python3 scripts/transcribe.py --status a1b2c3d4
 # Output: {"task_id": "a1b2c3d4", "status": "processing", "progress": 45, ...}
 
 # List recent tasks
-python3 skills/asr/scripts/transcribe.py --list
+python3 scripts/transcribe.py --list
 ```
 
 ## Core Features

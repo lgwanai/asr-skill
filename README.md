@@ -70,15 +70,15 @@ pip install -e .
 ### 3. IDE 集成指南
 
 #### Trae
-1.  下载并解压 release 包到项目的 `skills/asr` 目录。
+1.  下载并解压 release 包到项目目录。
 2.  Trae 会自动识别 `SKILL.md` 并加载技能。
 
 #### Cursor
 1.  将项目文件放入工作区。
-2.  将 `skills/asr/SKILL.md` 的内容复制到你的 `.cursorrules` 文件中，即可让 Cursor 学会使用此技能。
+2.  将 `SKILL.md` 的内容复制到你的 `.cursorrules` 文件中，即可让 Cursor 学会使用此技能。
 
 #### Claude Projects
-1.  上传 `skills/asr/scripts/transcribe.py` 和 `SKILL.md` 到 Project Files。
+1.  上传 `scripts/transcribe.py` 和 `SKILL.md` 到 Project Files。
 2.  将 `SKILL.md` 内容添加到 Project Instructions。
 
 ---
@@ -163,18 +163,18 @@ AI Agent 通常使用脚本方式调用，支持更灵活的异步控制：
 
 ```bash
 # 同步执行（适合短音频，自动选择模型）
-python3 skills/asr/scripts/transcribe.py input.mp3
+python3 scripts/transcribe.py input.mp3
 
 # 指定模型引擎
-python3 skills/asr/scripts/transcribe.py input.mp3 -m sensevoice   # CPU 快速模式
-python3 skills/asr/scripts/transcribe.py input.mp3 -m paraformer   # GPU 高精度模式
+python3 scripts/transcribe.py input.mp3 -m sensevoice   # CPU 快速模式
+python3 scripts/transcribe.py input.mp3 -m paraformer   # GPU 高精度模式
 
 # 异步执行（强烈推荐用于长视频/音频）
-python3 skills/asr/scripts/transcribe.py input.mp4 --async
+python3 scripts/transcribe.py input.mp4 --async
 # 返回 Task ID，例如: {"task_id": "a1b2c3d4", ...}
 
 # 查询任务进度
-python3 skills/asr/scripts/transcribe.py --status a1b2c3d4
+python3 scripts/transcribe.py --status a1b2c3d4
 ```
 
 ### Python API
